@@ -2,7 +2,7 @@ package ru.crew4dev.medicinechest
 
 import android.os.Bundle
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.snackbar.Snackbar
+import ru.terrakok.cicerone.Router
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -13,12 +13,15 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import ru.crew4dev.medicinechest.ui.praeperetum.PraeperetumFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private var toggle: ActionBarDrawerToggle? = null
+    //private val router: Router
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,13 +35,24 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, PraeperetumFragment.newInstance())
                 .commitNow()
-            val drawer : DrawerLayout  = findViewById(R.id.drawer_layout)
-            drawer.closeDrawer(GravityCompat.START)
+            useUpButton(false)
             //transaction.replace(R.id.fragment_layout_id, fragment)
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                .setAction("Action", null).show()
         }
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
+        drawerLayout.closeDrawer(GravityCompat.START)
+        toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+
+        toggle?.let { drawerLayout.addDrawerListener(it) }
+        toggle?.syncState()
+
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
@@ -62,5 +76,21 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    private fun useUpButton(value: Boolean) {
+        val actionBar = supportActionBar
+        if (value) {
+            //actionBar.setDisplayHomeAsUpEnabled(false);
+            toggle?.setDrawerIndicatorEnabled(false)
+            actionBar?.setDisplayHomeAsUpEnabled(true)
+            actionBar?.setDisplayShowHomeEnabled(true)
+            toggle?.setToolbarNavigationClickListener({ v -> onBackPressed() })
+        } else {
+            toggle?.setDrawerIndicatorEnabled(true)
+            //actionBar.setDisplayHomeAsUpEnabled(false); //Окончательно скрывает бургер
+            actionBar?.setDisplayShowHomeEnabled(false) //Кажется ни на что не влияет
+            toggle?.setToolbarNavigationClickListener(null)
+        }
     }
 }

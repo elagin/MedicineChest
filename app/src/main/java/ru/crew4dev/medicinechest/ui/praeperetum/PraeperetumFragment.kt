@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import ru.crew4dev.medicinechest.R
+import ru.crew4dev.medicinechest.ui.adapters.DrugListAdapter
 
 class PraeperetumFragment : Fragment() {
 
@@ -17,6 +18,7 @@ class PraeperetumFragment : Fragment() {
     }
 
     private lateinit var viewModel: PraeperetumViewModel
+    private lateinit var drugListAdapter: DrugListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
